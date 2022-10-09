@@ -1,0 +1,64 @@
+﻿@page "/savefile"
+
+@inject Blazored.LocalStorage.ILocalStorageService localStore
+@inject IJSRuntime JSRuntime
+
+
+<PageTitle>Save Dodock</PageTitle>
+
+<h3>Blazor Save & Generate File</h3>
+
+<h4>Current counter value is: @counter at @DateTime.Now</h4>
+<textarea @bind="fileContent" style="width:150px;height:100px" />
+<br />
+@*<button @onclick="SaveFile">SaveFile</button>*@
+
+<button class="btn btn-success" @onclick="DownloadFile">Download File</button>
+
+@code {
+    int counter = 0;
+
+    string Content;
+
+    string fileContent;
+
+    string fileName = "file.txt";
+
+    //public void SaveFile()
+    //{
+    //    Content = fileContent;
+    //}
+
+    protected override async Task OnInitializedAsync()
+    {
+        counter = await localStore.GetItemAsync<int>(nameof(counter));
+    }
+
+
+    private void DownloadFile()
+    {
+        //var text = "Hello, world!";
+
+        var bytes = System.Text.Encoding.UTF8.GetBytes(fileContent ?? "");
+
+
+        FileUtil.SaveAs(JSRuntime, $"dodocker_{new Random().Next(10000, 99999)}.yml", bytes);
+    }
+
+    public async void DownloadFile2()
+    {
+        await JSRuntime.InvokeAsync<object>("saveFile", fileName, Content);
+    }
+
+
+    public static class FileUtil
+    {
+        public async static Task SaveAs(IJSRuntime js, string filename, byte[] data)
+        {
+            await js.InvokeAsync<object>("saveAsFile", filename, Convert.ToBase64String(data));
+        }
+    }
+
+
+}
+

@@ -1,18 +1,42 @@
 ﻿@page "/counter"
 
+
+@inject Blazored.LocalStorage.ILocalStorageService localStore
+
+
 <PageTitle>Counter</PageTitle>
 
 <h1>Counter</h1>
 
-<p role="status">Current count: @currentCount</p>
+<p role="status">Current count: @counter</p>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<button class="btn btn-primary" @onclick="IncrementCount">Increase</button>
+<button class="btn btn-danger" @onclick="ResetCount">Reset</button>
+
+
 
 @code {
-    private int currentCount = 0;
 
-    private void IncrementCount()
+    private static int counter = 0;
+
+    // load value from local storage
+    protected override async Task OnInitializedAsync()
     {
-        currentCount++;
+        counter = await localStore.GetItemAsync<int>(nameof(counter));
     }
+
+    private async Task IncrementCount()
+    {
+        counter++;
+
+        await localStore.SetItemAsync(nameof(counter), counter);
+    }
+
+    private async Task ResetCount()
+    {
+        counter = 0;
+
+        await localStore.RemoveItemAsync(nameof(counter));
+    }
+
 }
