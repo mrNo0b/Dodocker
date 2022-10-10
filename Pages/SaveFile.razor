@@ -4,8 +4,6 @@
 @inject IJSRuntime JSRuntime
 
 
-<PageTitle>Save Dodock</PageTitle>
-
 <h3>Blazor Save & Generate File</h3>
 
 <h4>Current counter value is: @counter at @DateTime.Now</h4>
@@ -42,7 +40,7 @@
         var bytes = System.Text.Encoding.UTF8.GetBytes(fileContent ?? "");
 
 
-        FileUtil.SaveAs(JSRuntime, $"dodocker_{new Random().Next(10000, 99999)}.yml", bytes);
+        FileUtil.SaveAs(JSRuntime, $"dodocker_{ new Random().Next(10000, 99999) }.yml", bytes);
     }
 
     public async void DownloadFile2()
